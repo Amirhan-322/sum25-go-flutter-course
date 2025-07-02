@@ -29,102 +29,91 @@ class _RegistrationFormState extends State<RegistrationForm> {
   }
 
   void _submitForm() {
-    // TODO: Implement form submission
-    _nameController.clear();
-    _emailController.clear();
-    _passwordController.clear();
-    setState(() {
-      submited = true;
-    });
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration successful!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      _formKey.currentState!.reset();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 300,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Registration Form'),
+      ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextFormField(
                   key: const Key('name'),
+                  // TODO: use _nameController
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'name',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
+                    labelText: 'Name',
+                    hintText: 'Enter your name',
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    // TODO: validate if value is not null or empty and return 'Please enter your name'
+                    if(value == null || value == ""){
                       return 'Please enter your name';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-            
                 TextFormField(
                   key: const Key('email'),
+                  // TODO: use _emailController
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'email',
-                    prefixIcon: Icon(Icons.email),
-                    border: OutlineInputBorder(),
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
                   ),
-                  keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value == null || value.isEmpty || (!value.contains('@')) || (value.split('@').length != 2) 
-                      || value.split('@')[1].length < 3 || !value.split('@')[1].contains('.')) {
+                    final RegExp emailRegex = RegExp(
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                    );
+                    // TODO: validate if value is not null or empty and it match word@word.word, return 'Please enter a valid email'
+                    if(value == null || value == "" || !emailRegex.hasMatch(value)){
                       return 'Please enter a valid email';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-            
                 TextFormField(
                   key: const Key('password'),
+                  // TODO: use _passwordController
                   controller: _passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'password',
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
                   ),
                   obscureText: true,
                   validator: (value) {
-                    
-                    if (value == null || value.isEmpty || value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                    // TODO: validate if value is not null or empty and it has at least 6 characters, return 'Password must be at least 6 characters'
+                    if(value == null || value == "" || value.length < 6){
+                      return "Password must be at least 6 characters";
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
-            
-                Container(
-                  width: 200,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      
-                      if (_formKey.currentState!.validate()) {
-                        _submitForm();
-                      }else{
-                        setState(() {
-                          submited = false;
-                        });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text('Submit'),
-                  ),
-                ),
-
-                submited ? const Text("Registration successful!") : const SizedBox()
+                const SizedBox(height: 32),
+                // TODO: add a ElevatedButton with onPressed: _submitForm and child: Text('Submit')
+                ElevatedButton(
+                  onPressed: _submitForm, 
+                  child: Text("Submit")
+                )
               ],
             ),
           ),

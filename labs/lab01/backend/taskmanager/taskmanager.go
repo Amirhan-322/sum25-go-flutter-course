@@ -5,13 +5,20 @@ import (
 	"time"
 )
 
+// func main() {
+// 	var tm TaskManager = *NewTaskManager();
+
+// 	tm.AddTask("Task 1", "hehe")
+// 	tm.AddTask("Task 2", "hehe")
+
+// 	fmt.Println(tm.ListTasks(nil))
+
+// }
+
+// Predefined errors
 var (
-	// ErrTaskNotFound is returned when a task is not found
 	ErrTaskNotFound = errors.New("task not found")
-	// ErrEmptyTitle is returned when the task title is empty
-	ErrEmptyTitle = errors.New("task title cannot be empty")
-	// ErrInvalidID is returned when the task ID is invalid
-	ErrInvalidID = errors.New("invalid task ID")
+	ErrEmptyTitle   = errors.New("title cannot be empty")
 )
 
 // Task represents a single task
@@ -25,52 +32,49 @@ type Task struct {
 
 // TaskManager manages a collection of tasks
 type TaskManager struct {
-	tasks  map[int]*Task
+	tasks  map[int]Task
 	nextID int
 }
 
 // NewTaskManager creates a new task manager
 func NewTaskManager() *TaskManager {
-	// TODO: Implement task manager initialization
+	// TODO: Implement this function
 
 	TM := &TaskManager{
-		tasks: make(map[int]*Task),
+		tasks: make(map[int]Task),
 		nextID: 1,
 	}
 	return TM
 }
 
-// AddTask adds a new task to the manager
-func (tm *TaskManager) AddTask(title, description string) (*Task, error) {
-	// TODO: Implement task addition
+// AddTask adds a new task to the manager, returns an error if the title is empty, and increments the nextID
+func (tm *TaskManager) AddTask(title, description string) (Task, error) {
+	// TODO: Implement this function
 	if(len(title) == 0){
-		return nil, ErrEmptyTitle
+		return Task{}, ErrEmptyTitle
 	}
-	tm.tasks[tm.nextID] = &Task{
+	tm.tasks[tm.nextID] = Task{
 			ID: tm.nextID,
 			Title: title,
 			Description: description,
 			Done: false,
 			CreatedAt: time.Now(),
 		}
-	
-	return tm.tasks[tm.nextID], nil
+	tm.nextID++
+	return tm.tasks[tm.nextID-1], nil
 }
 
-// UpdateTask updates an existing task
+// UpdateTask updates an existing task, returns an error if the title is empty or the task is not found
 func (tm *TaskManager) UpdateTask(id int, title, description string, done bool) error {
-	// TODO: Implement task update
-	if(id <= 0){
-		return ErrInvalidID
-	}
+	// TODO: Implement this function
 	task, exists := tm.tasks[id]
-	if(!exists){
+	if(!exists || id <= 0){
 		return ErrTaskNotFound
 	}
 	if len(title)==0 {
 		return ErrEmptyTitle
 	}
-	newTask := &Task{
+	newTask := Task{
 			ID: id,
 			Title: title,
 			Description: description,
@@ -81,42 +85,37 @@ func (tm *TaskManager) UpdateTask(id int, title, description string, done bool) 
 	return nil
 }
 
-// DeleteTask removes a task from the manager
+// DeleteTask removes a task from the manager, returns an error if the task is not found
 func (tm *TaskManager) DeleteTask(id int) error {
-	// TODO: Implement task deletion
-	if(id <= 0){
-		return ErrInvalidID
-	}
-	if(tm.tasks[id] == nil){
+	// TODO: Implement this function
+	_, exists := tm.tasks[id]
+	if (!exists || id <= 0){
 		return ErrTaskNotFound
 	}
 	delete(tm.tasks, id)
 	return nil
 }
 
-// GetTask retrieves a task by ID
-func (tm *TaskManager) GetTask(id int) (*Task, error) {
-	// TODO: Implement task retrieval
-	if(id <= 0){
-		return nil, ErrInvalidID
-	}
+// GetTask retrieves a task by ID, returns an error if the task is not found
+func (tm *TaskManager) GetTask(id int) (Task, error) {
+	// TODO: Implement this function
 	task, exists := tm.tasks[id]
-	if(!exists ){
-		return nil, ErrTaskNotFound
+	if(!exists || id <= 0){
+		return Task{}, ErrTaskNotFound
 	}
 
 	return task, nil
 }
 
-// ListTasks returns all tasks, optionally filtered by done status
-func (tm *TaskManager) ListTasks(filterDone *bool) []*Task {
-	var list []*Task
+// ListTasks returns all tasks, optionally filtered by done status, returns an empty slice if no tasks are found
+func (tm *TaskManager) ListTasks(filterDone *bool) []Task {
+	var list []Task
 
-	for i := 0; i < tm.nextID; i++ {
-		if(tm.tasks[i] != nil){
-			list = append(list, tm.tasks[i])
+	for _, task := range tm.tasks {
+		if filterDone == nil || *filterDone == task.Done {
+			list = append(list, task)
 		}
 	}
-	// TODO: Implement task listing with optional filter
+	// TODO: Implement this function
 	return list
 }
